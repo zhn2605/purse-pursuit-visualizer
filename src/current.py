@@ -7,7 +7,7 @@ class Current:
     '''
     Represents a 'fake vehicle' for quick Pure Pursuit testing
     '''  
-    def __init__(self, position=np.array([0.0, 0.0]), lookAheadDistance=5.0, velocity=1.0, heading=0.0, max_accel=2.0):
+    def __init__(self, position=np.array([0.0, 0.0]), lookAheadDistance=2.0, velocity=1.0, heading=0.0, max_accel=2.0):
         # Current position of vehicle
         self.position = position  # (x, y)
 
@@ -21,7 +21,7 @@ class Current:
         self.velocity = velocity
         
         # Orientation of vehicle
-        self.theta = 0
+        self.theta = 45
         self.delta_theta = 0
 
         # Acceleration of vehicle

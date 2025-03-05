@@ -6,7 +6,7 @@ from history import Track
 history = History()
 history.generate_track()
 
-car = Car(velocity=1.0)
+car = Car(lookAheadDistance=1.0, velocity=1.0)
 pure_pursuit = PurePursuit()
 
 history.animate(car, pure_pursuit)

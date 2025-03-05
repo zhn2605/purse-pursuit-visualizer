@@ -49,7 +49,7 @@ class History:
         self.velocity.append(curr.velocity)
         self.time.append(time)
     
-    def animate(self, car, pure_pursuit, interval=50):        
+    def animate(self, car, pure_pursuit, interval=50, max_time=20.0):        
         fig, ax = plt.subplots()
         ax.set_xlim(min(self.track.xs) - 2, max(self.track.xs) + 2)  # Set x-axis limits
         ax.set_ylim(min(self.track.ys) - 5, max(self.track.ys) + 5)  # Set y-axis limits
@@ -62,8 +62,15 @@ class History:
     
         car_dot, = ax.plot([], [], 'bo', markersize=8, label="Car")
         lookAheadDot, = ax.plot([], [], 'kx', markersize=10, label="Lookahead Point")
+        final_pos = np.array([self.track.xs[-1], self.track.ys[-1]])
+
+        # Time limit
+        current_time = 0.0
+        dt = interval / 1000.0
 
         def update(frame):
+            nonlocal current_time
+
             # Update angle and position
             delta_theta = pure_pursuit.calc_angle(car, self.track)
             car.update(pure_pursuit, self.track)
@@ -78,8 +85,17 @@ class History:
             lookAheadDot.set_data([car.lookAheadPosition[0]], [car.lookAheadPosition[1]])
             trajectory_line.set_data(trajectory_xs, trajectory_ys)  # Update trajectory line
 
-            print("Car Position:", car.position)
-            print("Lookahead Position:", car.lookAheadPosition)
+            print(f"Time: {current_time:.2f}s, Car Position: {car.position}, Lookahead Position: {car.lookAheadPosition}")
+
+            if np.linalg.norm(car.position - final_pos) < 0.5:
+                print("Car reached final point.")
+                ani.event_source.stop()
+
+            if current_time > max_time:
+                print("Time limit reached.")
+                ani.event_source.stop()
+            
+            current_time += dt
 
             return car_dot, lookAheadDot, trajectory_line
 
