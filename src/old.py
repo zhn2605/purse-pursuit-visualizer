@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-Look_Forward = 3.5 #Originally 2
+Look_Forward = 5.0 #Originally 2
 WB = 2.9 # m Distance Between Axles; Wheelbase
 dt = 0.1 # Seconds
 
