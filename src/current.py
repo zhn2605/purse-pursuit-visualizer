@@ -30,12 +30,24 @@ class Current:
         # Maximum acceleration
         self.max_accel = max_accel
 
+        # Speed limits
+        self.max_speed = 10.0
+        self.min_speed = 1.0
+
         
     def distance(self, desired_x, desired_y):
         # pythagorean theroem
         return np.hypot(desired_x - self.position[0], desired_y - self.position[1])
 
+    def calc_velocity(self, turn_sensitivity=1.5):
+        speed_factor = np.exp(-turn_sensitivity * abs(self.delta_theta))
+        target_speed = self.min_speed + (self.max_speed - self.min_speed) * speed_factor
+
+        return target_speed
+        
+
     def update_velocity(self, target_velocity):
+        target_velocity = 
         dv = target_velocity - self.velocity
         
         # Implement a clamp for maximum velocity
@@ -54,13 +66,14 @@ class Current:
     def update(self, pure_pursuit, track):
         self.lookAheadPosition = pure_pursuit.calc_lookahead_pos(self, track)
 
-        if self.lookAheadPosition is not None:
-            # Adjust velocity based on distance to look-ahead poin
-            target_velocity = min(5.0, 2.0 + self.distance(*self.lookAheadPosition) / 2)
-            self.update_velocity(target_velocity)
+        # if self.lookAheadPosition is not None:
+        #     # Adjust velocity based on distance to look-ahead poin
+        #     target_velocity = min(5.0, 2.0 + self.distance(*self.lookAheadPosition) / 2)
+        #     self.update_velocity(target_velocity)
 
         self.delta_theta = pure_pursuit.calc_angle(self, track)
         self.theta += self.delta_theta * dt
-        print(self.theta)
+
+        self.velocity = self.calc_velocity()
 
         self.update_position()

@@ -38,9 +38,9 @@ class History:
     def display_track(self):
         self.track.show_track()
     
-    def generate_track(self):
-        for x in np.linspace(0, 10, 50):
-            point = np.array([x, -((x - 5)**2) + 25])
+    def generate_track(self, xmin=0, xmax=10, points=100, function=lambda x: -((x - 5)**2) + 25):
+        for x in np.linspace(xmin, xmax, points):
+            point = np.array([x, function(x)])
             self.track.add_point(point)
     
     def append(self, time, curr):
@@ -53,7 +53,7 @@ class History:
         fig, ax = plt.subplots()
         ax.set_xlim(min(self.track.xs) - 2, max(self.track.xs) + 2)  # Set x-axis limits
         ax.set_ylim(min(self.track.ys) - 5, max(self.track.ys) + 5)  # Set y-axis limits
-        ax.plot(self.track.xs, self.track.ys, color=self.track.color, label="Track")  # Draw the static track
+        ax.plot(self.track.xs, self.track.ys, marker='o', markersize=2, color=self.track.color, label="Track")  # Draw the static track
     
         # Store trajectory points
         trajectory_xs = []
