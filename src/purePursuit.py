@@ -35,10 +35,3 @@ class PurePursuit:
         delta_theta = np.arctan2(np.sin(delta_theta), np.cos(delta_theta))
 
         return delta_theta
-
-    def calc_accel(self, car, turn_sensitivity=5.0):
-        # Compute speed factor using euler's number
-        speed_factor = np.exp(-turn_sensitivity * abs(car.delta_theta))
-        target_speed = car.min_speed + (car.max_speed - car.min_speed) * speed_factor
-
-        return target_speed

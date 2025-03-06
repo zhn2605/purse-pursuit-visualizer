@@ -7,7 +7,7 @@ class Current:
     '''
     Represents a 'fake vehicle' for quick Pure Pursuit testing
     '''  
-    def __init__(self, position=np.array([0.0, 0.0]), lookAheadDistance=2.0, velocity=1.0, heading=0.0, max_accel=2.0):
+    def __init__(self, position=np.array([0.0, 0.0]), lookAheadDistance=2.0, velocity=1.0, heading=0.0, max_accel=1.0):
         # Current position of vehicle
         self.position = position  # (x, y)
 
@@ -39,21 +39,19 @@ class Current:
         # pythagorean theroem
         return np.hypot(desired_x - self.position[0], desired_y - self.position[1])
 
-    def calc_velocity(self, turn_sensitivity=1.5):
+    def calc_velocity(self, turn_sensitivity=1.0):
         speed_factor = np.exp(-turn_sensitivity * abs(self.delta_theta))
         target_speed = self.min_speed + (self.max_speed - self.min_speed) * speed_factor
 
         return target_speed
-        
 
     def update_velocity(self, target_velocity):
-        target_velocity = 
         dv = target_velocity - self.velocity
         
         # Implement a clamp for maximum velocity
-        if abs(dv) > self.max_accel * dt:
-            dv = np.sign(dv) * self.max_accel * dt
-        self.velocity += dv
+        acceleration = np.clip(dv / dt, -(self.max_accel + 3), self.max_accel)
+
+        self.velocity += acceleration * dt
 
     def update_position(self):
         # Separate into respective components
@@ -74,6 +72,7 @@ class Current:
         self.delta_theta = pure_pursuit.calc_angle(self, track)
         self.theta += self.delta_theta * dt
 
-        self.velocity = self.calc_velocity()
+        target_velocity = self.calc_velocity()
+        self.update_velocity(target_velocity)
 
         self.update_position()
