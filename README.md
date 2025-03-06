@@ -1,2 +1,2 @@
-# purse-pursuit-visualizer
+# pure-pursuit-visualizer
 for Autonomy
