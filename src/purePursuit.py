@@ -23,15 +23,38 @@ class PurePursuit:
 
         return lookAheadPoint if lookAheadPoint is not None else car.lookAheadPosition
 
-         
-    def calc_angle(self, car, track):
-        lookAheadPoint = self.calc_lookahead_pos(car, track)
-        car.lookAheadPosition = lookAheadPoint
+    def calc_distance(self, initial, desired):
+        # pythagorean theroem
+        return np.hypot(desired[0] - initial[0], desired[1] - initial[1])
 
-        direction = lookAheadPoint - car.position
+    def calc_angle(self, car, track):
+        direction = car.lookAheadPosition - car.position
         angle = np.arctan2(direction[1], direction[0])
 
         delta_theta = angle - car.theta
         delta_theta = np.arctan2(np.sin(delta_theta), np.cos(delta_theta))
 
         return delta_theta
+    
+    def calc_curvature(self, car, track):
+        # Vector from car to lookahead
+        dx = car.lookAheadPosition[0] - car.position[0]
+        dy = car.lookAheadPosition[1] - car.position[1]
+
+        # VERY important step of localizing the lookahead distance
+        local_x = dx * np.cos(car.theta) + dy * np.sin(car.theta)
+        local_y = -dx * np.sin(car.theta) + dy * np.cos(car.theta)
+
+        L = np.sqrt(local_x**2 + local_y**2)
+
+        return 2 * local_y / (L**2)
+
+    # def calc_curvature(self, car, track):
+    #     # Calculate radius of curvature
+    #     L = car.lookAheadDistance
+    #     desired_x = car.lookAheadPosition[0]
+
+    #     r = (L**2)/(2 * abs(desired_x))
+    #     curvature = 1/r
+
+    #     return curvature

@@ -30,17 +30,17 @@ class Current:
         # Maximum acceleration
         self.max_accel = max_accel
 
+        # Curvature
+        self.curvature = 0.0
+
         # Speed limits
         self.max_speed = 10.0
         self.min_speed = 1.0
 
-        
-    def distance(self, desired_x, desired_y):
-        # pythagorean theroem
-        return np.hypot(desired_x - self.position[0], desired_y - self.position[1])
-
     def calc_velocity(self, turn_sensitivity=1.0):
-        speed_factor = np.exp(-turn_sensitivity * abs(self.delta_theta))
+        curvature_magnitude = abs(self.curvature)
+        speed_factor = np.exp(-turn_sensitivity * curvature_magnitude)
+        
         target_speed = self.min_speed + (self.max_speed - self.min_speed) * speed_factor
 
         return target_speed
@@ -48,8 +48,8 @@ class Current:
     def update_velocity(self, target_velocity):
         dv = target_velocity - self.velocity
         
-        # Implement a clamp for maximum velocity
-        acceleration = np.clip(dv / dt, -(self.max_accel + 3), self.max_accel)
+        # Implement a clamp for maximum / minimum acceleration
+        acceleration = np.clip(dv / dt, -self.max_accel, self.max_accel)
 
         self.velocity += acceleration * dt
 
@@ -69,10 +69,12 @@ class Current:
         #     target_velocity = min(5.0, 2.0 + self.distance(*self.lookAheadPosition) / 2)
         #     self.update_velocity(target_velocity)
 
-        self.delta_theta = pure_pursuit.calc_angle(self, track)
-        self.theta += self.delta_theta * dt
+        # Use curvature for smoother turns
+        self.curvature = pure_pursuit.calc_curvature(self, track)
+        self.theta += self.curvature * self.velocity * dt
+
+        # self.delta_theta = pure_pursuit.calc_angle(self, track)
 
         target_velocity = self.calc_velocity()
         self.update_velocity(target_velocity)
-
         self.update_position()
