@@ -47,6 +47,8 @@ class PurePursuit:
 
         L = np.sqrt(local_x**2 + local_y**2)
 
+        if abs(local_y) < 1e-6:
+            return 0
         return 2 * local_y / (L**2)
 
     # def calc_curvature(self, car, track):

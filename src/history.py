@@ -28,12 +28,14 @@ class Track:
 #
 
 class History:
-    def __init__(self):
+    def __init__(self, debug=True):
         self.track = Track()
         self.position = []
         self.theta = []
         self.velocity = []
         self.time = []
+
+        self.debug = debug
     
     def display_track(self):
         self.track.show_track()
@@ -84,8 +86,10 @@ class History:
             car_dot.set_data([car.position[0]], [car.position[1]])
             lookAheadDot.set_data([car.lookAheadPosition[0]], [car.lookAheadPosition[1]])
             trajectory_line.set_data(trajectory_xs, trajectory_ys)  # Update trajectory line
-
-            print(f"Time: {current_time:.2f}s, Car Position: {car.position}, Lookahead Position: {car.lookAheadPosition}")
+            
+            # Debug flag
+            if self.debug:
+                print(f"Time: {current_time:.2f}s, Car Position: {car.position}, Lookahead Position: {car.lookAheadPosition}")
 
             if np.linalg.norm(car.position - final_pos) < 0.5:
                 print("Car reached final point.")

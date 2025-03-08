@@ -39,6 +39,7 @@ class Current:
 
     def calc_velocity(self, turn_sensitivity=1.0):
         curvature_magnitude = abs(self.curvature)
+        # print(curvature_magnitude)
         speed_factor = np.exp(-turn_sensitivity * curvature_magnitude)
         
         target_speed = self.min_speed + (self.max_speed - self.min_speed) * speed_factor
